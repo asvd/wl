@@ -190,7 +190,7 @@ Let us create a Whenable event representing the function completion:
 
 
 ```js
-var somethingWhenable = new Whenable();
+var somethingWhenable = new wl.Whenable;
 
 var whenSomethingDone = function(cb) {
     somethingWhenable.whenEmitted(cb);
