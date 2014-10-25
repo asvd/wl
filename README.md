@@ -6,27 +6,25 @@ There are two kinds of events:
 - *Reusable* events which may happen many times, like a mouse click or
   a keypress. When subscribing to such an event, one normally does not
   care if an event has already been triggered in the past. One just
-  needs to perform an action when the event is fired in the future.
+  needs to react to the event each time it happens in the future.
 
 - *One-off* events which only happen once, for instance a page load
   event, a json-request responce, a complete of calculation delegated
-  to a worker, or an asynchronous function callback.
+  to a worker, or an asynchronous function callback. For this kind of
+  events it matters when exactly an event happens: if there is no
+  assurance about if the event has already been triggered, there is a
+  need for additional check and a separate branch. This happens, for
+  instance, if there is a need to perform something upon the page
+  load: first one performs a check if the document is ready (in this
+  case one will likely prefer to perform the actions immediately),
+  otherwise one stores the listener as `window.onload`.
 
-Whenable is a design pattern targeted to simplify the work with the
-second kind of events. For those it matters when exactly an event
-happens: if there is no assurance about if the event has already been
-triggered, there is a need for additional check and a separate
-branch. This happens, for instance, if we need to perform something
-upon the page load: first we perform a check if the document is ready
-(in this case we will likely prefer to perform the actions
-immediately), otherwise we store the listener as `window.onload`.
-
-Whenable simplifies dealing with the one-off events by providing an
-opportunity to create a special kind of a listener subscriber.  When
-using that subscriber, one does not need to worry about if the event
-has already been triggered (in this case the listener is invoked
-immediately). Additionally, the subscriber can be provided with
-several listeners independently.
+Whenable is a design pattern targeted to simplify dealing with the
+second kind of events by creating a special kind of listener
+subscriber.  When using that subscriber, one does not need to worry
+about if the event has already been triggered (in this case the
+listener is invoked immediately). Additionally, the subscriber may be
+used several times to store additional listeners.
 
 Compare subscribing to the page onload event in the traditional
 style...
@@ -34,10 +32,10 @@ style...
 
 ```js
 if (document.readyState !== "complete") {
-    // already loaded
+    // page has already been loaded
     doWhatWeNeed();
 } else {
-    // preserving existing listener
+    // preserving any existing listener
     var origOnload = window.onload || function(){};
 
     window.onload = function(){
@@ -52,27 +50,28 @@ above to:
 
 
 ```js
-window.whenLoaded(doWhatWeNeed());
+window.whenLoaded(doWhatWeNeed);
 ```
 
 *The code means: call the given function if the page is loaded,
-otherwise wait until it is loaded and then call the function.*
+otherwise wait until the page is loaded, and then call the function.*
 
 
-The listener subscribers which behave like this are conventionally
-named starting with the `when..` prefix and followed by a past
-participle describing an event: `whenLoaded`, `whenCompleted`,
-`whenFailedToLoad`, and so on. Similarry the `Whenable` term is also
-conventionnaly used to describe an event which provides this kind of
-subscriber.
+The listener subscribers which behave like explained above are
+conventionally named starting with the `when..` prefix and followed by
+a past participle describing an event: `whenLoaded()`,
+`whenCompleted()`, `whenFailedToLoad()`, and so on. The Whenable term
+is used to designate an one-off event supporting this kind of
+subscription.
 
-Whenable pattern was inspired by Promises, and it is similar to
-Promises in that it also allows not to care about when an event
-actually fires. But unlike Promises, Whenable is much easier to use
-and understand, produces simplier code, and is more general solution
-thus covering a wider range of use-cases.
+Whenable pattern was inspired by
+[Promises](http://www.html5rocks.com/en/tutorials/es6/promises/), and
+it is similar to Promises in that it also allows not to care about
+when an event actually fires. But unlike Promises, Whenable is much
+easier to use and understand, produces simplier code, and is more
+general solution thus covering a wider range of use-cases.
 
-The `wl` library implements the Whenable object.
+This `wl` library implements the `Whenable` object.
 
 
 ### Installation
@@ -113,8 +112,7 @@ available.
 
 ### Usage
 
-Creating the Whenable event is simple. First create an object instance
-representing an event:
+Constructing a Whenable event is simple:
 
 ```js
 var myWhenable = new wl.Whenable;
@@ -126,7 +124,7 @@ The object has the two methods:
 myWhenable.emit();
 ```
 
-- to fire the event and call all the subscribed listeners, and:
+to fire the event and invoke the subscribed listeners, and:
 
 
 ```js
@@ -135,13 +133,13 @@ myWhenable.whenEmitted(myListener);
 
 - to subscribe `myListener()` function to the event. It will be
 invoked after the event is triggered. If the event has already been
-triggered before, the listener is called immediately (yet
+triggered some time ago, the `myListener()` is called immediately (yet
 asynchronously to keep the flow consistent).
 
 The methods of the `Whenable` object (along with the `Whenable`
 instance itself) are not supposed to be exposed to the event
-user. Instead a whenable subscriber should be created, which is simply
-a wrapper for the `whenEmitted()` method:
+user. Instead a whenable-style subscriber should be created, which is
+simply a wrapper for the `whenEmitted()` method:
 
 
 ```js
@@ -162,10 +160,12 @@ argument:
 myWhenable.whenEmitted(myObject.someMethod, myObject);
 ```
 
-Upon the event trigger, the listener is executed in the given context.
+Upon the event is triggered, the subscribed listeners are executed in
+the respective context, if those has been provided upon subscription.
 
-Additionally, the emission method may take any set of arguments which
-are then forwarded to every listener. This allows to provide the listeners with the event details upon emission:
+Additionally, the `emit()` method may take any set of arguments which
+are simply forwarded as the arguments provided to the subscribed
+listeners. This allows to provide the event details to the listeners:
 
 ```js
 myWhenable.emit(result);
@@ -185,7 +185,7 @@ var doSomething = function(cb) {
 }
 ```
 
-Let us create a Whenable event representing a function complete:
+Let us create a Whenable event representing a function completion:
 
 
 ```js
@@ -202,10 +202,10 @@ var initiateSomething = function() {
 }
 ```
 
-Now we have the two functions:
+Now there are the two functions:
 
-- `initiateSomething()` starts the process which finally leads to the
-  event emission, and
+- `initiateSomething()` starts the process which leads to the event
+  emission after some time, and
 
 - `whenSomethingDone()`, the whenable-style subscriber which may
   subscribe as many listeners as needed, before or after the event
@@ -215,8 +215,8 @@ Those two functions may now be used independently.
 
 
 Here is the implementation of the magic `window.whenLoaded()`
-subscriber used to listen the page load event, given in the beginning
-of this text:
+subscriber given in the beginning of this text. The subscriber is used
+to react to the page load event:
 
 ```js
 var createWhenLoaded = function() {
