@@ -221,7 +221,7 @@ to react to the page load event:
 
 ```js
 var createWhenLoaded = function() {
-    var onloadWhenable = new Whenable;
+    var onloadWhenable = new wl.Whenable;
 
     if (document.readyState == "complete") {
         // already loaded
