@@ -11,7 +11,7 @@ There are two kinds of events:
 - *One-off* events which only happen once, for instance a page load
   event, a json-request responce, a complete of calculation delegated
   to a worker, or an asynchronous function callback. For this kind of
-  events it matters when exactly an event happens: if there is no
+  events it matters when exactly the event is fired: if there is no
   assurance about if the event has already been triggered, there is a
   need for additional check and a separate branch. This happens, for
   instance, if there is a need to perform something upon the page
@@ -45,7 +45,7 @@ if (document.readyState !== "complete") {
 }
 ```
 
-...and using the 'whenable' subscriber, which simplifies everything
+...and using the Whenable subscriber, which simplifies everything
 above to:
 
 
@@ -60,8 +60,8 @@ otherwise wait until the page is loaded, and then call the function.*
 The listener subscribers which behave like explained above are
 conventionally named starting with the `when..` prefix and followed by
 a past participle describing an event: `whenLoaded()`,
-`whenCompleted()`, `whenFailedToLoad()`, and so on. The Whenable term
-is used to designate an one-off event supporting this kind of
+`whenCompleted()`, `whenFailedToLoad()` and so on. The Whenable term
+is also used to designate an one-off event supporting this kind of
 subscription.
 
 Whenable pattern was inspired by
@@ -86,7 +86,7 @@ JavaScript file using the `<script>` tag:
 <script src="wl/wl.js"></script>
 ```
 
-For Node.js — install wl with npm:
+For Node.js — install `wl` with npm:
 
 ```sh
 $ npm install wl
@@ -131,8 +131,8 @@ to fire the event and invoke the subscribed listeners, and:
 myWhenable.whenEmitted(myListener);
 ```
 
-- to subscribe `myListener()` function to the event. It will be
-invoked after the event is triggered. If the event has already been
+to subscribe `myListener()` function to the event. The listener will
+be invoked after the event is triggered. If the event has already been
 triggered some time ago, the `myListener()` is called immediately (yet
 asynchronously to keep the flow consistent).
 
@@ -161,11 +161,12 @@ myWhenable.whenEmitted(myObject.someMethod, myObject);
 ```
 
 Upon the event is triggered, the subscribed listeners are executed in
-the respective context, if those has been provided upon subscription.
+their respective contexts (if provided upon subscription).
 
 Additionally, the `emit()` method may take any set of arguments which
 are simply forwarded as the arguments provided to the subscribed
-listeners. This allows to provide the event details to the listeners:
+listeners. This allows to give to the listeners some details about the
+event:
 
 ```js
 myWhenable.emit(result);
@@ -185,7 +186,7 @@ var doSomething = function(cb) {
 }
 ```
 
-Let us create a Whenable event representing a function completion:
+Let us create a Whenable event representing the function completion:
 
 
 ```js
