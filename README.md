@@ -31,7 +31,7 @@ style...
 
 
 ```js
-if (document.readyState !== "complete") {
+if (document.readyState == "complete") {
     // page has already been loaded
     doWhatWeNeed();
 } else {
@@ -223,7 +223,7 @@ to react to the page load event:
 var createWhenLoaded = function() {
     var onloadWhenable = new Whenable;
 
-    if (document.readyState !== "complete") {
+    if (document.readyState == "complete") {
         // already loaded
         onloadWhenable.emit();
     } else {
