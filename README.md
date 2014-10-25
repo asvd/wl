@@ -133,8 +133,8 @@ myWhenable.whenEmitted(myListener);
 
 to subscribe `myListener()` function to the event. The listener will
 be invoked after the event is triggered. If the event has already been
-triggered some time ago, the `myListener()` is called immediately (yet
-asynchronously to keep the flow consistent).
+triggered before, the `myListener()` is called immediately (yet
+asynchronously in order to keep the flow consistent).
 
 The methods of the `Whenable` object (along with the `Whenable`
 instance itself) are not supposed to be exposed to the event
@@ -214,10 +214,57 @@ Now there are the two functions:
 
 Those two functions may now be used independently.
 
+Similarry, if there is an asynchronous routine with two outcomes, one
+may prepare the two whenable events:
 
-Here is the implementation of the magic `window.whenLoaded()`
-subscriber given in the beginning of this text. The subscriber is used
-to react to the page load event:
+
+```js
+var doSomething = function(successCb, failureCb) {
+    var cb = function() {
+        try {
+            // do something that may fail
+            ...
+        } catch(e) {
+            return failureCb();
+        }
+
+        successCb();
+    }
+
+    setTimeout(cb, 1000);
+}
+```
+
+
+```js
+var somethingSucceededWhenable = new wl.Whenable;
+var somethingFailedWhenable = new wl.Whenable;
+
+var whenSomethingSucceded = function(cb) {
+    somethingSucceededWhenable.whenEmitted(cb);
+}
+
+var whenSomethingFailed = function(cb) {
+    somethingSucceededWhenable.whenEmitted(cb);
+}
+
+var initiateSomething = function() {
+    doSomething(
+        function(){somethingSuccededWhenable.emit();},
+        function(){somethingFailedWhenable.emit();}
+    );
+}
+```
+
+The code above provides the similar initiation function
+`initiateSomething()`, and the two whenable subscribers,
+`whenSomethingSucceeded()` and `whenSomethingFailed()` which will
+subscribe the provided listener to the success and failure outcomes
+respectively.
+
+Another example: here is the implementation of the magic
+`window.whenLoaded()` subscriber given in the beginning of this
+text. The subscriber is used to react to the page load event:
 
 ```js
 var createWhenLoaded = function() {
