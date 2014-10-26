@@ -299,6 +299,41 @@ var tests = {
     },
     
     
+    'Subscribing not a function':
+    function() {
+        var w = new wl.Whenable;
+
+        var ok1 = false;
+        try {
+            w.whenEmitted([]);
+        } catch(e) {
+            ok1 = true;
+        }
+        
+        lighttest.check(ok1);
+
+        var ok2 = false;
+        try {
+            w.whenEmitted({});
+        } catch(e) {
+            ok2 = true;
+        }
+        
+        lighttest.check(ok2);
+
+        var ok3 = false;
+        try {
+            w.whenEmitted('function');
+        } catch(e) {
+            ok3 = true;
+        }
+        
+        lighttest.check(ok3);
+
+        lighttest.done();
+    }
+    
+    
 };
 
 

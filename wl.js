@@ -36,11 +36,35 @@
      * @param {Object} ctx optional context to call the listener in
      */
     Whenable.prototype.whenEmitted = function(func, ctx){
+        func = this._checkListener(func);
         if (this._emitted) {
             this._invoke(func, ctx, this._result);
         } else {
             this._listeners.push([func, ctx||null]);
         }
+    }
+      
+      
+    /**
+     * Checks if the provided object is suitable for being subscribed
+     * to the event (= is a function), throws an exception otherwise
+     * 
+     * @param {Object} obj to check for being subscribable
+     * 
+     * @throws {Exception} if object is not suitable for subscription
+     * @returns {Object} the provided object if yes
+     */
+    Whenable.prototype._checkListener = function(listener){
+        var type = typeof listener;
+        if (type != 'function') {
+            var msg =
+                'A function may only be subsribed to the event, '
+                + type
+                + ' was provided instead'
+            throw new Error(msg);
+        }
+
+        return listener;
     }
       
       
