@@ -71,7 +71,9 @@ when an event actually fires. But unlike Promises, Whenable is much
 easier to use and understand, produces simplier code, and is more
 general solution thus covering a wider range of use-cases.
 
-This `wl` library implements the `Whenable` object.
+This `wl` library implements the `Whenable` object, which represents
+such an event and can be used to easily produce a whenable-style
+subscriber.
 
 
 ### Installation
