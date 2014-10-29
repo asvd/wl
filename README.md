@@ -124,7 +124,7 @@ and invokes the subscribed listeners:
 myWhenable.emit();
 ```
 
-And the `getSubscriber()` method returns a whenable-style subscriber
+The `getSubscriber()` method returns a whenable-style subscriber
 function:
 
 ```js
