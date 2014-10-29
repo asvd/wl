@@ -24,9 +24,8 @@ listener is invoked immediately. Additionally, the subscriber may be
 used several times to store additional listeners.
 
 A good example of what could be simplified by using the Whenable
-solution is the page onload event. Compare subscribing in the
-traditional style:
-
+solution is the page onload event. Here is how one can listen to the
+onload event in the traditional style:
 
 ```js
 if (document.readyState == "complete") {
