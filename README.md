@@ -9,7 +9,7 @@ There are two kinds of events:
   needs to react to the event each time it happens in the future.
 
 - *One-off* events which only happen once, for instance a page load
-  event, a json-request responce, a complete of calculation delegated
+  event, an ajax-request responce, a complete of calculation delegated
   to a worker, or an asynchronous function callback. For this kind it
   matters if an event has already been triggered at the moment of
   subscription (which means there should be additional check). In
