@@ -43,9 +43,9 @@ if (document.readyState == "complete") {
 }
 ```
 
-The code above should be performed each time a new listener should
-react to the onload event. Using a whenable subscriber everything
-above is simplified to:
+The code should be performed each time a new listener should react to
+the onload event. Using a whenable subscriber everything above is
+simplified to:
 
 
 ```js
