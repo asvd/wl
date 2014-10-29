@@ -232,18 +232,18 @@ var doSomething = function(successCb, failureCb) {
 
 
 ```js
-var somethingSucceededWhenable = new wl.Whenable;
-var somethingFailedWhenable = new wl.Whenable;
+var success = new wl.Whenable;
+var failure = new wl.Whenable;
 
 var initiateSomething = function() {
     doSomething(
-        function(){somethingSuccededWhenable.emit();},
-        function(){somethingFailedWhenable.emit();}
+        function(){success.emit();},
+        function(){failure.emit();}
     );
 }
 
-var whenSomethingSucceded = somethingSucceededWhenable.getSubscriber();
-var whenSomethingFailed = somethingFailedWhenable.getSubscriber();
+var whenSomethingSucceded = success.getSubscriber();
+var whenSomethingFailed = failure.getSubscriber();
 ```
 
 The code above provides the similar initiator function
