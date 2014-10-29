@@ -58,7 +58,7 @@ function.*
 Listener subscribers which behave like explained above are
 conventionally named starting with the `when..` prefix and followed by
 a past participle describing an event: `whenLoaded()`,
-`whenCompleted()`, `whenFailedToLoad()` and so on. The Whenable term
+`whenCompleted()`, `whenFailedToLoad()` and so on. The *Whenable* term
 is also used to refer to a one-off event supporting this kind of
 subscription.
 
