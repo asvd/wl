@@ -11,10 +11,10 @@ There are two kinds of events:
 - *One-off* events which only happen once, for instance a page load
   event, an ajax-request responce, a complete of a calculation
   delegated to a worker, or an asynchronous function callback. For
-  this kind it matters if an event has already been triggered at the
-  moment of subscription (which means there should be additional
-  check). In latter case the listener should likely be performed
-  immediately.
+  this kind of events it matters if an event has already been
+  triggered at the moment of subscription (which means there should be
+  additional check). In latter case the listener should likely be
+  performed immediately.
 
 Whenable is a design pattern targeted to simplify dealing with the
 second kind of events by providing a special kind of listener
