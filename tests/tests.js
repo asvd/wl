@@ -13,8 +13,9 @@ var tests = {
     'Emission':
     function() {
         var w = new wl.Whenable;
+        var whenTriggered = w.getSubscriber();
         var ok = false;
-        w.whenEmitted(function(){
+        whenTriggered(function(){
             ok = true;
             lighttest.check(true);
             lighttest.done();
@@ -33,10 +34,11 @@ var tests = {
     'Subscription after emission':
     function() {
         var w = new wl.Whenable;
+        var whenTriggered = w.getSubscriber();
         w.emit();
 
         var ok = false;
-        w.whenEmitted(function(){
+        whenTriggered(function(){
             ok = true;
             lighttest.check(true);
             lighttest.done();
@@ -54,6 +56,7 @@ var tests = {
     'Multiple subscriptions':
     function() {
         var w = new wl.Whenable;
+        var whenTriggered = w.getSubscriber();
 
         var cb1done = false;
         var cb1 = function() {
@@ -67,8 +70,8 @@ var tests = {
             cb2done = true;
         };
         
-        w.whenEmitted(cb1);
-        w.whenEmitted(cb2);
+        whenTriggered(cb1);
+        whenTriggered(cb2);
 
         w.emit();
         
@@ -85,8 +88,8 @@ var tests = {
             cb4done = true;
         };
         
-        w.whenEmitted(cb3);
-        w.whenEmitted(cb4);
+        whenTriggered(cb3);
+        whenTriggered(cb4);
         
 
         var ok = false;
@@ -97,7 +100,7 @@ var tests = {
             ok = true;
             lighttest.done();
         }
-        w.whenEmitted(fin);
+        whenTriggered(fin);
 
 
         setTimeout(function(){
@@ -112,8 +115,9 @@ var tests = {
     'Emission upon timeout':
     function() {
         var w = new wl.Whenable;
+        var whenTriggered = w.getSubscriber();
         var ok1 = false;
-        w.whenEmitted(function(){
+        whenTriggered(function(){
             ok1 = true;
             lighttest.check(true);
         });
@@ -124,7 +128,7 @@ var tests = {
 
         var ok2 = false;
         setTimeout(function() {
-            w.whenEmitted(function(){
+            whenTriggered(function(){
                 ok2 = true;
                 lighttest.check(true);
             });
@@ -132,7 +136,7 @@ var tests = {
 
         var ok3 = false;
         setTimeout(function() {
-            w.whenEmitted(function(){
+            whenTriggered(function(){
                 ok3 = true;
                 lighttest.check(true);
             });
@@ -147,9 +151,10 @@ var tests = {
     'Never emitted whenable':
     function() {
         var w = new wl.Whenable;
+        var whenTriggered = w.getSubscriber();
 
         var ok = true;
-        w.whenEmitted(function(){
+        whenTriggered(function(){
             ok = false;
             lighttest.check(false);
         });
@@ -163,8 +168,9 @@ var tests = {
     'Transferring argument':
     function() {
         var w = new wl.Whenable;
+        var whenTriggered = w.getSubscriber();
         var ok = false;
-        w.whenEmitted(function(hello, world){
+        whenTriggered(function(hello, world){
             ok = true;
             lighttest.check(hello == 'hello');
             lighttest.check(world == 'world');
@@ -185,15 +191,16 @@ var tests = {
     'Transferring arguments for two listeners':
     function() {
         var w = new wl.Whenable;
+        var whenTriggered = w.getSubscriber();
         var ok1 = false;
-        w.whenEmitted(function(hello, world){
+        whenTriggered(function(hello, world){
             ok1 = true;
             lighttest.check(hello == 'hello');
             lighttest.check(world == 'world');
         });
 
         var ok2 = false;
-        w.whenEmitted(function(hello, world){
+        whenTriggered(function(hello, world){
             ok2 = true;
             lighttest.check(hello == 'hello');
             lighttest.check(world == 'world');
@@ -211,6 +218,7 @@ var tests = {
     'Applying context':
     function() {
         var w = new wl.Whenable;
+        var whenTriggered = w.getSubscriber();
         var ok = false;
 
         var ctx = {
@@ -218,7 +226,7 @@ var tests = {
             world: 'world'
         };
 
-        w.whenEmitted(function(){
+        whenTriggered(function(){
             ok = true;
             lighttest.check(this.hello == 'hello');
             lighttest.check(this.world == 'world');
@@ -239,13 +247,14 @@ var tests = {
     'Applying different contexts':
     function() {
         var w = new wl.Whenable;
+        var whenTriggered = w.getSubscriber();
 
         var ctx1 = {
             hello1: 'hello1'
         };
 
         var ok1 = false;
-        w.whenEmitted(function(){
+        whenTriggered(function(){
             ok1 = true;
             lighttest.check(this.hello1 == 'hello1');
         }, ctx1);
@@ -257,7 +266,7 @@ var tests = {
         };
 
         var ok2 = false;
-        w.whenEmitted(function(){
+        whenTriggered(function(){
             ok2 = true;
             lighttest.check(this.hello2 == 'hello2');
         }, ctx2);
@@ -272,6 +281,7 @@ var tests = {
     'Applying context and transferring arguments':
     function() {
         var w = new wl.Whenable;
+        var whenTriggered = w.getSubscriber();
         var ok = false;
 
         var ctx = {
@@ -279,7 +289,7 @@ var tests = {
             world: 'world'
         };
 
-        w.whenEmitted(function(hello2, world2){
+        whenTriggered(function(hello2, world2){
             ok = true;
             lighttest.check(this.hello == 'hello');
             lighttest.check(this.world == 'world');
@@ -302,10 +312,11 @@ var tests = {
     'Subscribing not a function':
     function() {
         var w = new wl.Whenable;
+        var whenTriggered = w.getSubscriber();
 
         var ok1 = false;
         try {
-            w.whenEmitted([]);
+            whenTriggered([]);
         } catch(e) {
             ok1 = true;
         }
@@ -314,7 +325,7 @@ var tests = {
 
         var ok2 = false;
         try {
-            w.whenEmitted({});
+            whenTriggered({});
         } catch(e) {
             ok2 = true;
         }
@@ -323,7 +334,7 @@ var tests = {
 
         var ok3 = false;
         try {
-            w.whenEmitted('function');
+            whenTriggered('function');
         } catch(e) {
             ok3 = true;
         }

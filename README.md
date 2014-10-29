@@ -10,24 +10,21 @@ There are two kinds of events:
 
 - *One-off* events which only happen once, for instance a page load
   event, a json-request responce, a complete of calculation delegated
-  to a worker, or an asynchronous function callback. For this kind of
-  events it matters when exactly the event is fired: if there is no
-  assurance about if the event has already been triggered, there is a
-  need for additional check and a separate branch. This happens, for
-  instance, if there is a need to perform something upon the page
-  load: first one performs a check if the document is ready (in this
-  case one will likely prefer to perform the actions immediately),
-  otherwise one stores the listener as `window.onload`.
+  to a worker, or an asynchronous function callback. For this kind it
+  matters if an event has already been triggered at the moment of
+  subscription (which means there should be additional check). In
+  latter case the listener should likely be performed immediately.
 
 Whenable is a design pattern targeted to simplify dealing with the
-second kind of events by creating a special kind of listener
+second kind of events by providing a special kind of listener
 subscriber.  When using that subscriber, one does not need to worry
-about if the event has already been triggered (in this case the
-listener is invoked immediately). Additionally, the subscriber may be
+about if an event has already been triggered, in this case the
+listener is invoked immediately. Additionally, the subscriber may be
 used several times to store additional listeners.
 
-Compare subscribing to the page onload event in the traditional
-style...
+A good example of what could be simplified by using the Whenable
+solution is the page onload event. Compare subscribing in the
+traditional style...
 
 
 ```js
@@ -45,23 +42,22 @@ if (document.readyState == "complete") {
 }
 ```
 
-...and using the Whenable subscriber, which simplifies everything
-above to:
+...and using a whenable subscriber, which simplifies everything above
+to:
 
 
 ```js
 window.whenLoaded(doWhatWeNeed);
 ```
 
-*The code means: call the given function if the page is loaded,
+*The code says: call the given function if the page is loaded,
 otherwise wait until the page is loaded, and then call the function.*
 
-
-The listener subscribers which behave like explained above are
+Listener subscribers which behave like explained above are
 conventionally named starting with the `when..` prefix and followed by
 a past participle describing an event: `whenLoaded()`,
 `whenCompleted()`, `whenFailedToLoad()` and so on. The Whenable term
-is also used to designate an one-off event supporting this kind of
+is also used to designate a one-off event supporting this kind of
 subscription.
 
 Whenable pattern was inspired by
@@ -79,7 +75,7 @@ subscriber.
 ### Installation
 
 For the web-browser environment — download the
-[distribution](https://github.com/asvd/wl/releases/download/v0.1.0/wl-0.1.0.tar.gz),
+[distribution](https://github.com/asvd/wl/releases/download/v0.2.0/wl-0.2.0.tar.gz),
 unpack it and load the `wl.js` in a preferrable way. That is an
 UMD module, thus for instance it may simply be loaded as a plain
 JavaScript file using the `<script>` tag:
@@ -101,7 +97,7 @@ var wl = require('wl');
 ```
 
 Optionally you may load the script from the
-[distribution](https://github.com/asvd/wl/releases/download/v0.1.0/wl-0.1.0.tar.gz):
+[distribution](https://github.com/asvd/wl/releases/download/v0.2.0/wl-0.2.0.tar.gz):
 
 ```js
 var wl = require('path/to/wl.js');
@@ -120,46 +116,44 @@ Constructing a Whenable event is simple:
 var myWhenable = new wl.Whenable;
 ```
 
-The object has the two methods:
+The object has the two methods. The `emit()` method fires the event
+and invokes the subscribed listeners:
 
 ```js
 myWhenable.emit();
 ```
 
-to fire the event and invoke the subscribed listeners, and:
-
+And the `getSubscriber()` method returns a whenable-style subscriber
+function:
 
 ```js
-myWhenable.whenEmitted(myListener);
+var whenEventTriggered = myWhenable.getSubscriber();
 ```
 
-to subscribe `myListener()` function to the event. The listener will
-be invoked after the event is triggered. If the event has already been
-triggered before, the `myListener()` is called immediately (yet
-asynchronously in order to keep the flow consistent).
+The subscriber may later be reused to subscribe a listener to the
+event:
+
+```js
+whenEventTriggered(myListener);
+```
+
+The `myListener()` will be invoked after the event is triggered. If
+the event has already been triggered at the moment of subscription,
+the listener is called immediately (yet asynchronously in order to
+keep the flow consistent).
 
 The methods of the `Whenable` object (along with the `Whenable`
 instance itself) are not supposed to be exposed to the event
-user. Instead a whenable-style subscriber should be created, which is
-simply a wrapper for the `whenEmitted()` method:
+user. Normally the `Whenable` event is stored private and is emitted
+by internal means. Instead the whenable subscriber function (returned
+by `getSubscriber()` method) is to be provided to the user so that he
+can attach listeners to the event.
 
-
-```js
-// subscribes a listener to the event
-var whenSomethingHappened = function(listener) {
-    myWhenable.whenEmitted(listener);
-}
-```
-
-The `emit()` method is invoked by an internal logic related to the
-event. Now anyone may use `whenSomethingHappened()` subscriber and
-listen to the event.
-
-When providing a listener, the context may be provided as a second
+When subscribing a listener, the context may be provided as a second
 argument:
 
 ```js
-myWhenable.whenEmitted(myObject.someMethod, myObject);
+whenEventTriggered(myObject.someMethod, myObject);
 ```
 
 Upon the event is triggered, the subscribed listeners are executed in
@@ -167,8 +161,8 @@ their respective contexts (if provided upon subscription).
 
 Additionally, the `emit()` method may take any set of arguments which
 are simply forwarded as the arguments provided to the subscribed
-listeners. This allows to give to the listeners some details about the
-event:
+listeners. This allows to supply the listeners with some details about
+the event:
 
 ```js
 myWhenable.emit(result);
@@ -194,25 +188,23 @@ Let us create a Whenable event representing the function completion:
 ```js
 var somethingWhenable = new wl.Whenable;
 
-var whenSomethingDone = function(cb) {
-    somethingWhenable.whenEmitted(cb);
-}
-
 var initiateSomething = function() {
     doSomething(function() {
         somethingWhenable.emit();
     });
 }
+
+var whenSomethingDone = somethingWhenable.getSubscriber();
 ```
 
 Now there are the two functions:
 
-- `initiateSomething()` starts the process which leads to the event
-  emission after some time, and
+- `initiateSomething()` starts the process which should lead to the
+  event emission after some time, and
 
 - `whenSomethingDone()`, the whenable-style subscriber which may
   subscribe as many listeners as needed, before or after the event
-  emission.
+  is emitted.
 
 Those two functions may now be used independently.
 
@@ -242,55 +234,42 @@ var doSomething = function(successCb, failureCb) {
 var somethingSucceededWhenable = new wl.Whenable;
 var somethingFailedWhenable = new wl.Whenable;
 
-var whenSomethingSucceded = function(cb) {
-    somethingSucceededWhenable.whenEmitted(cb);
-}
-
-var whenSomethingFailed = function(cb) {
-    somethingSucceededWhenable.whenEmitted(cb);
-}
-
 var initiateSomething = function() {
     doSomething(
         function(){somethingSuccededWhenable.emit();},
         function(){somethingFailedWhenable.emit();}
     );
 }
+
+var whenSomethingSucceded = somethingSucceededWhenable.getSubscriber();
+var whenSomethingFailed = somethingFailedWhenable.getSubscriber();
 ```
 
-The code above provides the similar initiation function
+The code above provides the similar initiator function
 `initiateSomething()`, and the two whenable subscribers,
-`whenSomethingSucceeded()` and `whenSomethingFailed()` which will
-subscribe the provided listener to the success and failure outcomes
-respectively.
+`whenSomethingSucceeded()` and `whenSomethingFailed()` which subscribe
+a provided listener to the success or failure outcomes respectively.
 
 Another example: here is the implementation of the magic
 `window.whenLoaded()` subscriber given in the beginning of this
 text. The subscriber is used to react to the page load event:
 
 ```js
-var createWhenLoaded = function() {
-    var onloadWhenable = new wl.Whenable;
+var onloadWhenable = new wl.Whenable;
 
-    if (document.readyState == "complete") {
-        // already loaded
+if (document.readyState == "complete") {
+    // already loaded
+    onloadWhenable.emit();
+} else {
+    // preserving existing listener
+    var origOnload = window.onload || function(){};
+
+    window.onload = function(){
+        origOnload();
         onloadWhenable.emit();
-    } else {
-        // preserving existing listener
-        var origOnload = window.onload || function(){};
-
-        window.onload = function(){
-            origOnload();
-            onloadWhenable.emit();
-        }
-    }
-
-    return function(listener) {
-        onloadWhenable.whenEmitted(listener);
     }
 }
 
-
-window.whenLoaded = createWhenLoaded();
+window.whenLoaded = onloadWhenable.getSubscriber();
 ```
 

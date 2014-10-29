@@ -30,12 +30,44 @@
 
       
     /**
+     * Fires the event, issues the listeners
+     * 
+     * @param ... all given arguments are forwarded to the listeners
+     */
+    Whenable.prototype.emit = function(){
+        if (!this._emitted) {
+            this._emitted = true;
+
+            for (var i = 0; i < arguments.length; i++) {
+                this._result.push(arguments[i]);
+            }
+
+            var listener;
+            while(listener = this._listeners.pop()) {
+                this._invoke(listener[0], listener[1], this._result);
+            }
+        }
+    }
+      
+    
+    /**
+     * @returns {Function} whenable subscriber to the event
+     */
+    Whenable.prototype.getSubscriber = function() {
+        var me = this;
+        return function(listener, ctx) {
+            me._whenEmitted(listener, ctx);
+        }
+    }
+
+      
+    /**
      * Adds another listener to be executed upon the event emission
      * 
      * @param {Function} func listener function to subscribe
      * @param {Object} ctx optional context to call the listener in
      */
-    Whenable.prototype.whenEmitted = function(func, ctx){
+    Whenable.prototype._whenEmitted = function(func, ctx){
         func = this._checkListener(func);
         if (this._emitted) {
             this._invoke(func, ctx, this._result);
@@ -83,27 +115,6 @@
     }
 
       
-    /**
-     * Fires the event, issues the listeners
-     * 
-     * @param ... all given arguments are forwarded to the listeners
-     */
-    Whenable.prototype.emit = function(){
-        if (!this._emitted) {
-            this._emitted = true;
-
-            for (var i = 0; i < arguments.length; i++) {
-                this._result.push(arguments[i]);
-            }
-
-            var listener;
-            while(listener = this._listeners.pop()) {
-                this._invoke(listener[0], listener[1], this._result);
-            }
-        }
-    }
-      
-    
     exports.Whenable = Whenable;
 }));
 
