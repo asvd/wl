@@ -25,7 +25,7 @@ used several times to store additional listeners.
 
 A good example of what could be simplified by using the Whenable
 solution is the page onload event. Compare subscribing in the
-traditional style...
+traditional style:
 
 
 ```js
@@ -43,8 +43,9 @@ if (document.readyState == "complete") {
 }
 ```
 
-...and using a whenable subscriber, which simplifies everything above
-to:
+The code above should be performed each time a new listener should
+react on the onload event. Using a whenable subscriber everything
+above is simplified to:
 
 
 ```js
