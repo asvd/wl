@@ -51,8 +51,9 @@ simplified to:
 window.whenLoaded(doWhatWeNeed);
 ```
 
-*The code says: call the given function if the page is loaded,
-otherwise wait until the page is loaded, and then call the function.*
+*The code says: call the given function `doWhatWeNeed()` if the page
+is loaded, otherwise wait until the page is loaded, and then call the
+function.*
 
 Listener subscribers which behave like explained above are
 conventionally named starting with the `when..` prefix and followed by
