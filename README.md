@@ -147,8 +147,8 @@ The methods of the `Whenable` object (along with the `Whenable`
 instance itself) are not supposed to be exposed to the event
 user. Normally the `Whenable` event is stored private and is emitted
 by internal means. Instead the whenable subscriber function (returned
-by `getSubscriber()` method) is to be provided to the user so that he
-can attach listeners to the event.
+by the `getSubscriber()` method) is to be provided to the user so that
+he can attach listeners to the event.
 
 When subscribing a listener, the context may be provided as a second
 argument:
@@ -207,9 +207,9 @@ Now there are the two functions:
   subscribe as many listeners as needed, before or after the event
   is emitted.
 
-Those two functions may now be used independently.
+Those two functions may now be used separately.
 
-Similarry, if there is an asynchronous routine with two outcomes, one
+Similarly, if there is an asynchronous routine with two outcomes, one
 may prepare the two whenable events:
 
 
