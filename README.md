@@ -202,7 +202,7 @@ var whenSomethingDone = somethingWhenable.getSubscriber();
 Now there are the two functions:
 
 - `initiateSomething()` starts the process which should lead to the
-  event emission after some time, and
+  event emission in the future, and
 
 - `whenSomethingDone()`, the whenable-style subscriber which may
   subscribe as many listeners as needed, before or after the event
