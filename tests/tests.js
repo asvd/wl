@@ -94,9 +94,11 @@ var tests = {
 
         var ok = false;
         var fin = function() {
-            lighttest.check(
-                cb1done && cb2done && cb3done && cb4done
-            );
+            lighttest.check(cb1done);
+            lighttest.check(cb2done);
+            lighttest.check(cb3done);
+            lighttest.check(cb4done);
+
             ok = true;
             lighttest.done();
         }
