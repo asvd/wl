@@ -7,6 +7,8 @@ var tests = {
             wl.Whenable
         );
 
+        lighttest.check(false);
+
         lighttest.done();
     },
 
