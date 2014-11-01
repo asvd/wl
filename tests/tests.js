@@ -102,7 +102,12 @@ var tests = {
             ok = true;
             lighttest.done();
         }
-        whenTriggered(fin);
+
+        setTimeout(
+            function() {
+                whenTriggered(fin);
+            }, 500
+        );
 
 
         setTimeout(function(){
