@@ -1,6 +1,6 @@
 /**
  * @fileoverview wl - Whenable events
- * @version 0.1.0
+ * @version 0.2.1
  * 
  * @license MIT, see http://github.com/asvd/wl
  * Copyright (c) 2014 asvd <heliosframework@gmail.com> 

@@ -77,7 +77,7 @@ subscriber.
 ### Installation
 
 For the web-browser environment — download the
-[distribution](https://github.com/asvd/wl/releases/download/v0.2.0/wl-0.2.0.tar.gz),
+[distribution](https://github.com/asvd/wl/releases/download/v0.2.1/wl-0.2.1.tar.gz),
 unpack it and load the `wl.js` in a preferrable way. That is an
 UMD module, thus for instance it may simply be loaded as a plain
 JavaScript file using the `<script>` tag:
@@ -99,7 +99,7 @@ var wl = require('wl');
 ```
 
 Optionally you may load the script from the
-[distribution](https://github.com/asvd/wl/releases/download/v0.2.0/wl-0.2.0.tar.gz):
+[distribution](https://github.com/asvd/wl/releases/download/v0.2.1/wl-0.2.1.tar.gz):
 
 ```js
 var wl = require('path/to/wl.js');
