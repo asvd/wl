@@ -155,6 +155,7 @@
         lighttest._platform.printFail = function() {
             lighttest._platform.printRed('FAIL ');
             console.log('');
+            console.trace();
         }
         lighttest._platform.reset = function (code) {
         };
