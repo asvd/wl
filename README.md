@@ -1,6 +1,10 @@
 wl - Whenable events
 ====================
 
+
+[![Build Status](https://travis-ci.org/asvd/wl.svg?branch=master)](https://travis-ci.org/asvd/wl)
+
+
 There are two kinds of events:
 
 - *Reusable* events which may happen many times, like a mouse click or
