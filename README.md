@@ -4,7 +4,6 @@ wl - Whenable events
 
 [![Build Status](https://travis-ci.org/asvd/wl.svg?branch=master)](https://travis-ci.org/asvd/wl)
 
-
 There are two kinds of events:
 
 - *Reusable* events which may happen many times, like a mouse click or
@@ -12,13 +11,13 @@ There are two kinds of events:
   care if an event has already been triggered in the past. One just
   needs to react to the event each time it happens in the future.
 
-- *One-off* events which only happen once, for instance a page load
-  event, an ajax-request responce, a complete of a calculation
-  delegated to a worker, or an asynchronous function callback. For
-  this kind of events it matters if an event has already been
-  triggered at the moment of subscription (which means there should be
-  additional check). In latter case the listener should likely be
-  performed immediately.
+- *One-off* events which only happen once (or do not happen at all),
+  for instance a page load event, an ajax-request responce, a complete
+  of a calculation delegated to a worker, or an asynchronous function
+  callback. For this kind of events it matters if an event has already
+  been triggered at the moment of subscription (which means there
+  should be additional check). In latter case the listener should
+  likely be performed immediately.
 
 Whenable is a design pattern targeted to simplify dealing with the
 second kind of events by providing a special kind of listener
@@ -212,7 +211,8 @@ Now there are the two functions:
   subscribe as many listeners as needed, before or after the event
   is emitted.
 
-Those two functions may now be used separately.
+Those two functions may now be used separately by different parts of
+application.
 
 Similarly, if there is an asynchronous routine with two outcomes, one
 may prepare the two whenable events:
