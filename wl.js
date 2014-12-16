@@ -115,6 +115,62 @@
     }
 
       
+    /**
+     * For the given whenable subscribers produces another whenable
+     * subscriber which fires when any of the given subscribers fire
+     * 
+     * @param {Function} when1
+     * @param {Function} when2
+     * @param ...
+     * 
+     * @returns {Function}
+     */
+    var whenAny = function() {
+        var when = new wl.Whenable;
+
+        for (var i = 0; i < arguments.length; i++) {
+            arguments[i](function(){
+                when.emit();
+            });
+        }
+
+        return when.getSubscriber();
+    }
+    
+    
+    
+    /**
+     * For the given whenable subscribers produces another whenable
+     * subscriber which fires when all of the given subscribers fire
+     * 
+     * @param {Function} when1
+     * @param {Function} when2
+     * @param ...
+     * 
+     * @returns {Function}
+     */
+    var whenAll = function() {
+        if (arguments.length == 1) {
+            return arguments[0];
+        } else {
+            var whenAll = new wl.Whenable;
+
+            var whenFirst = arguments[0];
+            var rest = [].slice.call(arguments,1);
+            var whenRest = wl.whenAll.apply(null,rest);
+            whenFirst(function(){
+                whenRest(function(){
+                    whenAll.emit();
+                });
+            });
+
+            return whenAll.getSubscriber();
+        }
+    }
+    
+    
     exports.Whenable = Whenable;
+    exports.whenAny = whenAny;
+    exports.whenAll = whenAll;
 }));
 
