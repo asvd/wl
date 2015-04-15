@@ -279,3 +279,6 @@ if (document.readyState == "complete") {
 window.whenLoaded = onloadWhenable.getSubscriber();
 ```
 
+
+follow me on twitter: https://twitter.com/asvd0
+
